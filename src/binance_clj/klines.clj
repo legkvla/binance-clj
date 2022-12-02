@@ -10,7 +10,9 @@
    :high (read-string (get kline 2))
    :low (read-string (get kline 3))
    :close (read-string (get kline 4))
-   :volume (read-string (get kline 5))})
+   :volume (read-string (get kline 5))
+   :trades (get kline 8)
+   :buy-volume (read-string (get kline 9))})
 
 (defn get-klines
   "Takes url parameters `params`, sends a get request,
@@ -18,8 +20,9 @@
   [params]
   (let [url (str "https://api.binance.com/api/v3/klines" params)
         message (client/get url)]
-        (map parse-kline (read-string (:body message)))))
-  
+
+    (map parse-kline (read-string (:body message)))))
+
 (defn get-klines-full
   "Sends a kline request with [[get-klines]] specifying all possible parameters.
   Arguments:
@@ -55,7 +58,7 @@
   "Makes an empty datastructure to track trading pair `symbol` price data
   with specified `interval` and (optionally) `start-time`."
   ([symbol interval]
-   (gen-empty-price-data symbol interval (long 1e12))) 
+   (gen-empty-price-data symbol interval (long 1e12)))
   ([symbol interval start-time]   ; no real reason why 1e12
    {:pair symbol                  ; binance has data from ~1.5e12ms since epoch
     :interval interval
